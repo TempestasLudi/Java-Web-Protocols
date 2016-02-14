@@ -1,4 +1,4 @@
-package com.tempestasludi.java.P12_site.http;
+package com.tempestasludi.java.p17_webProtocols.http;
 
 import java.io.DataInputStream;
 import java.io.EOFException;

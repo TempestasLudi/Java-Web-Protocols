@@ -1,4 +1,4 @@
-package com.tempestasludi.java.P12_site.ws;
+package com.tempestasludi.java.p17_webProtocols.ws;
 
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -6,11 +6,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-import com.tempestasludi.java.P12_site.http.Body;
-import com.tempestasludi.java.P12_site.http.Header;
-import com.tempestasludi.java.P12_site.http.HeaderField;
-import com.tempestasludi.java.P12_site.http.Message;
-import com.tempestasludi.java.P12_site.http.ResponseLine;
+import com.tempestasludi.java.p17_webProtocols.http.Body;
+import com.tempestasludi.java.p17_webProtocols.http.Header;
+import com.tempestasludi.java.p17_webProtocols.http.HeaderField;
+import com.tempestasludi.java.p17_webProtocols.http.Message;
+import com.tempestasludi.java.p17_webProtocols.http.ResponseLine;
 
 public class Handshaker {
 	

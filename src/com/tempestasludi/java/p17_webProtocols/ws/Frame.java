@@ -1,4 +1,4 @@
-package com.tempestasludi.java.P12_site.ws;
+package com.tempestasludi.java.p17_webProtocols.ws;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
