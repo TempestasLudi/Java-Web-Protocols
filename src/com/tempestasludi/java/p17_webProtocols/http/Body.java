@@ -1,7 +1,5 @@
 package com.tempestasludi.java.p17_webProtocols.http;
 
-import java.util.Arrays;
-
 /**
  * Body represents an HTTP message body.
  * 
