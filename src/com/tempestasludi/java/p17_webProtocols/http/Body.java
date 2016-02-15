@@ -1,5 +1,7 @@
 package com.tempestasludi.java.p17_webProtocols.http;
 
+import java.util.Arrays;
+
 /**
  * Body represents an HTTP message body.
  * 
@@ -15,10 +17,15 @@ public class Body {
 	/**
 	 * Class constructor.
 	 * 
-	 * @param content the content of the body
+	 * @param content
+	 *            the content of the body
 	 */
 	public Body(String content) {
-		this.content = content.getBytes();
+		if (content != null) {
+			this.content = content.getBytes();
+		} else {
+			this.content = null;
+		}
 	}
 
 	/**
@@ -26,25 +33,27 @@ public class Body {
 	 * 
 	 * @return the content
 	 */
-	public String getContent(){
+	public String getContent() {
 		return new String(this.content);
 	}
 
 	/**
 	 * Changes the content.
 	 * 
-	 * @param content the content
+	 * @param content
+	 *            the content
 	 */
-	public void setContent(String content){
+	public void setContent(String content) {
 		this.content = content.getBytes();
 	}
 
 	/**
 	 * Changes the content.
 	 * 
-	 * @param content the content
+	 * @param content
+	 *            the content
 	 */
-	public void setContent(byte[] content){
+	public void setContent(byte[] content) {
 		this.content = content;
 	}
 
@@ -54,7 +63,7 @@ public class Body {
 	 * @return a string representation of the body
 	 */
 	@Override
-	public String toString(){
+	public String toString() {
 		return new String(this.content);
 	}
 
@@ -63,21 +72,21 @@ public class Body {
 	 * 
 	 * @return a string representation of the body
 	 */
-	public byte[] toBytes(){
+	public byte[] toBytes() {
 		return this.content;
 	}
-	
+
 	/**
 	 * Equals method to compare object with this instance
 	 */
 	@Override
-	public boolean equals(Object other){
-		if(other instanceof Body){
+	public boolean equals(Object other) {
+		if (other instanceof Body) {
 			Body that = (Body) other;
 			return this.getContent().equals(that.getContent());
 		}
 		return false;
-		
+
 	}
 
 }
