@@ -1,14 +1,16 @@
 package com.tempestasludi.java.p17_webProtocols.http;
 
+import java.util.Arrays;
+
 /**
- * Body represents an HTTP message body.
+ * Body represents the body of an HTTP message.
  * 
  * @author Arnoud van der Leer
  */
 public class Body {
 
 	/**
-	 * The content of the body.
+	 * The bytes composing the content of the body.
 	 */
 	private byte[] content;
 
@@ -16,7 +18,7 @@ public class Body {
 	 * Class constructor.
 	 * 
 	 * @param content
-	 *            the content of the body
+	 *            a string representing the content of the body
 	 */
 	public Body(String content) {
 		if (content != null) {
@@ -24,6 +26,16 @@ public class Body {
 		} else {
 			this.content = null;
 		}
+	}
+
+	/**
+	 * Class constructor.
+	 * 
+	 * @param content
+	 *            the bytes composing the content of the body
+	 */
+	public Body(byte[] content) {
+		this.content = Arrays.copyOf(content, content.length);
 	}
 
 	/**
@@ -39,17 +51,17 @@ public class Body {
 	 * Changes the content.
 	 * 
 	 * @param content
-	 *            the content
+	 *            a string representing the content to change to
 	 */
 	public void setContent(String content) {
 		this.content = content.getBytes();
 	}
 
 	/**
-	 * Changes the content.
+	 * Changes the content bytes.
 	 * 
 	 * @param content
-	 *            the content
+	 *            the content to change to
 	 */
 	public void setContent(byte[] content) {
 		this.content = content;
@@ -75,7 +87,7 @@ public class Body {
 	}
 
 	/**
-	 * Equals method to compare object with this instance
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean equals(Object other) {
