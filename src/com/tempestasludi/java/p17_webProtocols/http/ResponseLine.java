@@ -1,30 +1,33 @@
 package com.tempestasludi.java.p17_webProtocols.http;
 
 /**
- * ResponseLine represents the response-line of an HTTP response.
+ * ResponseLine represents the response line of an HTTP response.
  * 
  * @author Arnoud van der Leer
  */
 public class ResponseLine implements HeaderLine {
+
 	/**
 	 * The HTTP version.
 	 */
 	private String version;
-	
+
 	/**
 	 * The response code.
 	 */
 	private String code;
-	
+
 	/**
 	 * The response status.
 	 */
 	private String status;
-	
+
 	/**
-	 * Class constructor, reads the data from a line from a HTTP response header.
+	 * Class constructor, reads the data from a line from a HTTP response
+	 * header.
 	 * 
-	 * @param line the line from the HTTP response header
+	 * @param line
+	 *            the line from the HTTP response header
 	 */
 	public ResponseLine(String line) {
 		String[] parts = line.split(" ");
@@ -32,13 +35,16 @@ public class ResponseLine implements HeaderLine {
 		this.code = parts[1].trim();
 		this.status = parts[2].trim();
 	}
-	
+
 	/**
-	 * Class constructor, takes the data as params.
+	 * Class constructor, takes the data as individual params.
 	 * 
-	 * @param version the HTTP version
-	 * @param code    the response code
-	 * @param status the response status
+	 * @param version
+	 *            the HTTP version
+	 * @param code
+	 *            the response code
+	 * @param status
+	 *            the response status
 	 */
 	public ResponseLine(String version, String code, String status) {
 		this.version = version;
@@ -54,7 +60,7 @@ public class ResponseLine implements HeaderLine {
 	public String getVersion() {
 		return this.version;
 	}
-	
+
 	/**
 	 * Gets the response code.
 	 * 
@@ -63,7 +69,7 @@ public class ResponseLine implements HeaderLine {
 	public String getCode() {
 		return this.code;
 	}
-	
+
 	/**
 	 * Gets the response status.
 	 * 
@@ -72,58 +78,56 @@ public class ResponseLine implements HeaderLine {
 	public String getStatus() {
 		return this.status;
 	}
-	
+
 	/**
 	 * Changes the HTTP version.
 	 * 
-	 * @param version the HTTP version
+	 * @param version
+	 *            the HTTP version
 	 */
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	
+
 	/**
 	 * Changes the response code.
 	 * 
-	 * @param code the response code
+	 * @param code
+	 *            the response code
 	 */
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	/**
 	 * Changes the response status.
 	 * 
-	 * @param status the response status
+	 * @param status
+	 *            the response status
 	 */
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	/**
-	 * Generates the response-line in string format.
-	 * 
-	 * @return the response-line in string format
+	 * {@inheritDoc}
 	 */
 	@Override
-	public String toString(){
+	public String toString() {
 		return this.version + " " + this.code + " " + this.status + "\r\n";
 	}
-	
+
 	/**
-	 * Compares two objects to see if they are equal
-	 * @param other Object to compare this instance to
-	 * @return true if equal false if not
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean equals(Object other) {
-		if(other instanceof ResponseLine){
+		if (other instanceof ResponseLine) {
 			ResponseLine that = (ResponseLine) other;
-			return this.getVersion().equals(that.getVersion()) && 
-					this.getCode().equals(that.getCode()) && 
-					this.getStatus().equals(that.getStatus());
+			return this.getVersion().equals(that.getVersion()) && this.getCode().equals(that.getCode())
+					&& this.getStatus().equals(that.getStatus());
 		}
-		
+
 		return false;
 	}
 }

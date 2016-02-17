@@ -16,7 +16,7 @@ public class BodyTest {
 
 	@Test
 	public void testGetSetContent() {
-		Body body = new Body(null);
+		Body body = new Body((String) null);
 		body.setContent("Hello, World!");
 		assertEquals("Hello, World!", body.getContent());
 	}

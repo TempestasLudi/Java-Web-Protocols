@@ -78,9 +78,7 @@ public class Body {
 	}
 
 	/**
-	 * Represents the body by a byte array.
-	 * 
-	 * @return a string representation of the body
+	 * {@inheritDoc}
 	 */
 	public byte[] toBytes() {
 		return this.content;

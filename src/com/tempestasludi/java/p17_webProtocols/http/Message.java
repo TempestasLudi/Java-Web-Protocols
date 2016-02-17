@@ -23,7 +23,7 @@ public class Message {
 	private Body body;
 
 	/**
-	 * A flag determining whether the message should include auto-headers.
+	 * A flag determining whether the message should create some default headers.
 	 */
 	private boolean autoHeaders = true;
 
@@ -202,9 +202,7 @@ public class Message {
 	}
 
 	/**
-	 * Generates the HTTP message in string format.
-	 * 
-	 * @return the HTTP message in string format
+	 * {@inheritDoc}
 	 */
 	@Override
 	public String toString() {

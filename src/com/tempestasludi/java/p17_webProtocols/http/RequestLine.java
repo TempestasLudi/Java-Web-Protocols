@@ -1,11 +1,12 @@
 package com.tempestasludi.java.p17_webProtocols.http;
 
 /**
- * RequestLine represents the request-line of an HTTP request.
+ * RequestLine represents the request line of an HTTP request.
  * 
  * @author Arnoud van der Leer
  */
 public class RequestLine implements HeaderLine {
+
 	/**
 	 * The request method.
 	 */
@@ -22,9 +23,11 @@ public class RequestLine implements HeaderLine {
 	private String version;
 
 	/**
-	 * Class constructor, reads the data from a line from a HTTP request header.
+	 * Class constructor, reads the data from a line from an HTTP request
+	 * header.
 	 * 
-	 * @param line the line from the HTTP request header
+	 * @param line
+	 *            the line from the HTTP request header
 	 */
 	public RequestLine(String line) {
 		String[] parts = line.split(" ");
@@ -34,11 +37,14 @@ public class RequestLine implements HeaderLine {
 	}
 
 	/**
-	 * Class constructor, takes the data as params.
+	 * Class constructor, takes the data as individual params.
 	 * 
-	 * @param method the request method
-	 * @param URI the request URI
-	 * @param version the HTTP version
+	 * @param method
+	 *            the request method
+	 * @param URI
+	 *            the request URI
+	 * @param version
+	 *            the HTTP version
 	 */
 	public RequestLine(String method, String URI, String version) {
 		this.method = method;
@@ -76,8 +82,8 @@ public class RequestLine implements HeaderLine {
 	/**
 	 * Changes the request method.
 	 * 
-	 * @return the request method
 	 * @param method
+	 *            the request method
 	 */
 	public void setMethod(String method) {
 		this.method = method;
@@ -86,46 +92,42 @@ public class RequestLine implements HeaderLine {
 	/**
 	 * Changes the request URI.
 	 * 
-	 * @param URI the request URI
+	 * @param URI
+	 *            the request URI
 	 */
 	public void setUri(String URI) {
 		this.URI = URI;
 	}
-	
+
 	/**
 	 * Changes the HTTP version.
 	 * 
-	 * @param version the HTTP version
+	 * @param version
+	 *            the HTTP version
 	 */
 	public void setVersion(String version) {
 		this.version = version;
 	}
 
 	/**
-	 * Generates the request-line in string format.
-	 * 
-	 * @return the request-line in string format
+	 * {@inheritDoc}
 	 */
 	@Override
-	public String toString(){
+	public String toString() {
 		return this.method + " " + this.URI + " " + this.version + "\r\n";
 	}
-	
-	
+
 	/**
-	 * Compares two objects to see if they are equal
-	 * @param other Object to compare this instance to
-	 * @return true if equal false if not
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean equals(Object other) {
-		if(other instanceof RequestLine){
+		if (other instanceof RequestLine) {
 			RequestLine that = (RequestLine) other;
-			return this.getMethod().equals(that.getMethod()) && 
-					this.getUri().equals(that.getUri()) && 
-					this.getVersion().equals(that.getVersion());
+			return this.getMethod().equals(that.getMethod()) && this.getUri().equals(that.getUri())
+					&& this.getVersion().equals(that.getVersion());
 		}
-		
+
 		return false;
 	}
 }
