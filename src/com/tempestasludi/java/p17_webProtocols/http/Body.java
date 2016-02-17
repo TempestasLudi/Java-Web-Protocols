@@ -43,8 +43,12 @@ public class Body {
 	 * 
 	 * @return the content
 	 */
-	public String getContent() {
+	public String getContentString() {
 		return new String(this.content);
+	}
+	
+	public byte[] getContent() {
+		return Arrays.copyOf(this.content, this.content.length);
 	}
 
 	/**
@@ -91,7 +95,7 @@ public class Body {
 	public boolean equals(Object other) {
 		if (other instanceof Body) {
 			Body that = (Body) other;
-			return this.getContent().equals(that.getContent());
+			return Arrays.equals(this.content, that.getContent());
 		}
 		return false;
 

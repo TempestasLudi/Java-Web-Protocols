@@ -209,7 +209,7 @@ public class Message {
 		if (this.autoHeaders) {
 			if (!(this.header.getHeaderLine() instanceof ResponseLine)
 					|| "200".equals(((ResponseLine) this.header.getHeaderLine()).getCode())) {
-				this.header.addField(new HeaderField("Content-Length", String.valueOf(body.getContent().length())));
+				this.header.addField(new HeaderField("Content-Length", Integer.toString(body.toString().length())));
 			}
 			this.header.addField(new HeaderField("Date", new Date().toString()));
 		}

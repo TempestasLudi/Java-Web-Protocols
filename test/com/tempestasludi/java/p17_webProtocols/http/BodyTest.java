@@ -4,27 +4,51 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public class BodyTest {
 
 	@Test
-	public void testConstructorBody() {
+	public void testConstructorString() {
 		Body body = new Body("Hello, World!");
-		assertEquals("Hello, World!", body.getContent());
+		assertEquals("Hello, World!", body.getContentString());
+	}
+	
+	@Test
+	public void testConstructorBytes() {
+		byte[] bytes = {1, 2, 6, 12, -6, 8, 127};
+		Body body = new Body(bytes);
+		assertTrue(Arrays.equals(bytes, body.getContent()));
 	}
 
 	@Test
-	public void testGetSetContent() {
+	public void testGetSetContentString() {
 		Body body = new Body((String) null);
 		body.setContent("Hello, World!");
-		assertEquals("Hello, World!", body.getContent());
+		assertEquals("Hello, World!", body.getContentString());
+	}
+	
+	@Test
+	public void testGetSetContent() {
+		byte[] bytes = {1, 2, 6, 12, -6, 8, 127};
+		Body body = new Body("");
+		body.setContent(bytes);
+		assertTrue(Arrays.equals(bytes, body.getContent()));
 	}
 
 	@Test
 	public void testToString() {
 		Body body = new Body("Hello, World!");
-		assertEquals(body.getContent(), body.toString());
+		assertEquals("Hello, World!", body.toString());
+	}
+	
+	@Test
+	public void testToBytes() {
+		byte[] bytes = {1, 2, 6, 12, -6, 8, 127};
+		Body body = new Body(bytes);
+		assertTrue(Arrays.equals(bytes, body.toBytes()));
 	}
 
 	@Test
