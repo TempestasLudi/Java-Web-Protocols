@@ -61,6 +61,101 @@ public class Frame {
 	}
 
 	/**
+	 * Check whether this is the last frame.
+	 *
+	 * @return lastFrame
+	 */
+	public boolean isLastFrame() {
+		return lastFrame;
+	}
+
+	/**
+	 * Get the opcode.
+	 *
+	 * @return the opcode
+	 */
+	public int getOpcode() {
+		return opcode;
+	}
+
+	/**
+	 * Check whether the frame is masked or not.
+	 *
+	 * @return masked
+	 */
+	public boolean isMasked() {
+		return masked;
+	}
+
+	/**
+	 * Get the mask.
+	 *
+	 * @return the mask
+	 */
+	public byte[] getMask() {
+		return mask;
+	}
+
+	/**
+	 * Get the payload.
+	 *
+	 * @return the payload
+	 */
+	public String getPayload() {
+		return payload;
+	}
+
+	/**
+	 * Change whether the frame is the last one or not.
+	 *
+	 * @param lastFrame
+	 *            the state to change to
+	 */
+	public void setLastFrame(boolean lastFrame) {
+		this.lastFrame = lastFrame;
+	}
+
+	/**
+	 * Change the opcode.
+	 *
+	 * @param opcode
+	 *            the opcode to change to
+	 */
+	public void setOpcode(int opcode) {
+		this.opcode = opcode;
+	}
+
+	/**
+	 * Change whether the frame is masked or not.
+	 *
+	 * @param masked
+	 *            the status to change to
+	 */
+	public void setMasked(boolean masked) {
+		this.masked = masked;
+	}
+
+	/**
+	 * Change the mask.
+	 *
+	 * @param mask
+	 *            the mask to change to
+	 */
+	public void setMask(byte[] mask) {
+		this.mask = mask;
+	}
+
+	/**
+	 * Change the payload.
+	 *
+	 * @param payload
+	 *            the payload to change to
+	 */
+	public void setPayload(String payload) {
+		this.payload = payload;
+	}
+
+	/**
 	 * Reads a frame from an input stream.
 	 *
 	 * @param in
