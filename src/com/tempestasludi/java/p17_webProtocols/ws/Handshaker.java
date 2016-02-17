@@ -12,16 +12,29 @@ import com.tempestasludi.java.p17_webProtocols.http.HeaderField;
 import com.tempestasludi.java.p17_webProtocols.http.Message;
 import com.tempestasludi.java.p17_webProtocols.http.ResponseLine;
 
+/**
+ * Handshaker is designed respond to a client websocket handshake request.
+ *
+ * @author Tempestas Ludi
+ */
 public class Handshaker {
-	
+
+	/**
+	 * Writes a handshake response.
+	 *
+	 * @param request
+	 *            the request to respond to
+	 * @param out
+	 *            the outputStream to write to
+	 */
 	public static void makeServerHandshake(Message request, PrintWriter out) {
 		String clientKey = "";
 		if (request.getHeader().getField("Sec-WebSocket-Key") != null) {
 			clientKey = generateKey(request.getHeader().getField("Sec-WebSocket-Key").getValue().trim());
 		}
 
-		Message response = new Message(new Header(new ResponseLine("HTTP/1.1", "101", "Switching Protocols")), new Body(""),
-				false);
+		Message response = new Message(new Header(new ResponseLine("HTTP/1.1", "101", "Switching Protocols")),
+				new Body(""), false);
 		response.getHeader().addField(new HeaderField("Upgrade", "websocket"));
 		response.getHeader().addField(new HeaderField("Connection", "Upgrade"));
 		response.getHeader().addField(new HeaderField("Sec-WebSocket-Accept", clientKey));
@@ -32,8 +45,14 @@ public class Handshaker {
 		out.flush();
 	}
 
+	/**
+	 * Generates a key based on a key sent by the client.
+	 *
+	 * @param clientKey
+	 *            the key sent from the client
+	 * @return a key based on clientKey
+	 */
 	private static String generateKey(String clientKey) {
-//		clientKey = new String(Base64.getDecoder().decode(clientKey.getBytes(StandardCharsets.UTF_8))).trim();
 		clientKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		MessageDigest md = null;
 		try {
@@ -44,5 +63,5 @@ public class Handshaker {
 		clientKey = new String(Base64.getEncoder().encode(md.digest(clientKey.getBytes(StandardCharsets.UTF_8))));
 		return clientKey;
 	}
-	
+
 }

@@ -6,14 +6,52 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Fram represents a data frame in an web socket communication session.
+ *
+ * @author Tempestas Ludi
+ */
 public class Frame {
-	
+
+	/**
+	 * Whether this frame is the last one or not.
+	 */
 	private boolean lastFrame;
+
+	/**
+	 * The opcode, the type, of the frame.
+	 */
 	private int opcode;
+
+	/**
+	 * Whether this frame is masked (encrypted) or not.
+	 */
 	private boolean masked;
+
+	/**
+	 * If masked, the mask with which it is masked.
+	 */
 	private byte[] mask;
+
+	/**
+	 * The actual data of the frame.
+	 */
 	private String payload;
-	
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param lastFrame
+	 *            whether the frame is the last one or not
+	 * @param opcode
+	 *            the opcode of the frame
+	 * @param masked
+	 *            whether the frame is masked or not
+	 * @param mask
+	 *            if masked, the mask
+	 * @param payload
+	 *            the content of the frame
+	 */
 	public Frame(boolean lastFrame, int opcode, boolean masked, byte[] mask, String payload) {
 		this.lastFrame = lastFrame;
 		this.opcode = opcode;
@@ -21,27 +59,14 @@ public class Frame {
 		this.mask = mask;
 		this.payload = payload;
 	}
-	
-	public boolean isLastFrame() {
-		return this.lastFrame;
-	}
-	
-	public int getOpcode() {
-		return this.opcode;
-	}
-	
-	public boolean isMasked() {
-		return this.masked;
-	}
-	
-	public byte[] getMask() {
-		return this.mask;
-	}
-	
-	public String getPayload() {
-		return this.payload;
-	}
-	
+
+	/**
+	 * Reads a frame from an input stream.
+	 *
+	 * @param in
+	 *            the stream to read from
+	 * @return a frame based on the data from the input stream
+	 */
 	public static Frame read(DataInputStream in) {
 		try {
 			int buffer = in.read();
@@ -72,8 +97,7 @@ public class Frame {
 			for (int i = 0; i < length; i++) {
 				if (masked) {
 					payload[i] = (byte) (in.read() ^ mask[i % 4]);
-				}
-				else {
+				} else {
 					payload[i] = (byte) (in.read());
 				}
 			}
@@ -84,13 +108,18 @@ public class Frame {
 		}
 		return new Frame(true, 1, false, new byte[0], "");
 	}
-	
+
+	/**
+	 * Writes the frame to a output stream.
+	 *
+	 * @param out
+	 *            the stream to write to
+	 */
 	public void write(DataOutputStream out) {
 		try {
 			if (this.lastFrame) {
 				out.write((byte) 128 + opcode);
-			}
-			else {
+			} else {
 				out.write((byte) opcode);
 			}
 			byte[] dataBytes = this.payload.getBytes(StandardCharsets.UTF_8);
@@ -118,5 +147,5 @@ public class Frame {
 			e.printStackTrace();
 		}
 	}
-	
+
 }
