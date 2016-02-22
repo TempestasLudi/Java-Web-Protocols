@@ -3,8 +3,7 @@ package com.tempestasludi.java.p17_webProtocols.http;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class BodyTest {
 	public void testConstructorBytes() {
 		byte[] bytes = {1, 2, 6, 12, -6, 8, 127};
 		Body body = new Body(bytes);
-		assertTrue(Arrays.equals(bytes, body.getContent()));
+		assertArrayEquals(bytes, body.getContent());
 	}
 
 	@Test
@@ -35,7 +34,7 @@ public class BodyTest {
 		byte[] bytes = {1, 2, 6, 12, -6, 8, 127};
 		Body body = new Body("");
 		body.setContent(bytes);
-		assertTrue(Arrays.equals(bytes, body.getContent()));
+		assertArrayEquals(bytes, body.getContent());
 	}
 
 	@Test
@@ -48,7 +47,7 @@ public class BodyTest {
 	public void testToBytes() {
 		byte[] bytes = {1, 2, 6, 12, -6, 8, 127};
 		Body body = new Body(bytes);
-		assertTrue(Arrays.equals(bytes, body.toBytes()));
+		assertArrayEquals(bytes, body.toBytes());
 	}
 
 	@Test
