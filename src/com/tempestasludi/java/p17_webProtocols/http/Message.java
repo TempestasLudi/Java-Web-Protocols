@@ -85,7 +85,6 @@ public class Message {
 		return autoHeaders;
 	}
 	
-
 	/**
 	 * Change the autoHeaders.
 	 *
@@ -137,8 +136,10 @@ public class Message {
 	 * @param request
 	 *            whether the message is a request or not
 	 * @return a new message based on the data from the input stream
+	 * @throws IOException 
+	 * @throws EOFException 
 	 */
-	public static Message read(DataInputStream in, boolean request) {
+	public static Message read(DataInputStream in, boolean request) throws EOFException, IOException {
 		String requestLineString = readLine(in).trim();
 		if (requestLineString.split(" ").length != 3) {
 			return null;
@@ -176,24 +177,16 @@ public class Message {
 	 * @param in
 	 *            the input stream
 	 * @return one line from the input stream
+	 * @throws EOFException, IOException 
 	 */
-	private static String readLine(DataInputStream in) {
+	private static String readLine(DataInputStream in) throws EOFException, IOException {
 		String line = "";
 		boolean lineBreak = false;
 		while (!lineBreak) {
-			try {
-				char character = (char) in.readByte();
-				line += Character.toString(character);
-				if (line.length() >= 2 && "\r\n".equals(line.substring(line.length() - 2))) {
-					lineBreak = true;
-				}
-			} catch (EOFException e) {
-				System.out.println("Another end of file.");
-				return line;
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				e.printStackTrace();
-				return line;
+			char character = (char) in.readByte();
+			line += Character.toString(character);
+			if (line.length() >= 2 && "\r\n".equals(line.substring(line.length() - 2))) {
+				lineBreak = true;
 			}
 		}
 		return line;
@@ -207,17 +200,13 @@ public class Message {
 	 * @param n
 	 *            the number of bytes to read
 	 * @return a string of n bytes from the input stream
+	 * @throws IOException 
 	 */
-	private static String readBytes(DataInputStream in, int n) {
+	private static String readBytes(DataInputStream in, int n) throws IOException {
 		String line = "";
 		for (int i = 0; i < n; i++) {
-			try {
-				char character = (char) in.readByte();
-				line += character;
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				e.printStackTrace();
-			}
+			char character = (char) in.readByte();
+			line += character;
 		}
 		return line;
 	}
@@ -256,12 +245,24 @@ public class Message {
 		}
 		byte[] header = (this.header.toString() + "\r\n").getBytes();
 		byte[] body = this.body.toBytes();
-		byte[] result = new byte[header.length + body.length];
+		byte[] tail = "\r\n\r\n".getBytes();
+		byte[] result;
+		if (this.body.toString().length() > 0) {
+			result = new byte[header.length + body.length + tail.length];
+		}
+		else {
+			result = new byte[header.length + body.length];
+		}
 		for (int i = 0; i < header.length; i++) {
 			result[i] = header[i];
 		}
 		for (int i = 0; i < body.length; i++) {
 			result[header.length + i] = body[i];
+		}
+		if (this.body.toString().length() > 0) {
+			for (int i = 0; i < tail.length; i++) {
+				result[header.length + body.length + i] = tail[i];
+			}
 		}
 		return result;
 	}

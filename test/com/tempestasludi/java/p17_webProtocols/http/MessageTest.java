@@ -4,8 +4,11 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.Test;
@@ -38,16 +41,16 @@ public class MessageTest {
 
 		assertEquals(false, testMessage.isAutoHeaders());
 	}
-	
+
 	@Test
-	public void testGetSetAutoHeaders(){
+	public void testGetSetAutoHeaders() {
 		Header header = new Header();
 		Body body = new Body("Content");
 		Message testMessage = new Message(header, body, false);
 		testMessage.setAutoHeaders(true);
 		assertEquals(true, testMessage.isAutoHeaders());
 	}
-	
+
 	@Test
 	public void testGetSetHeader() {
 		Header header = new Header();
@@ -88,24 +91,22 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testRead1() {
-
+	public void testRead1() throws EOFException, IOException {
 		String message = "GET /chat HTTP/1.1\r\n" + "Content-Length: 12\r\n" + "Content-Type: text/json\r\n" + "Date: "
 				+ new Date().toString() + "\r\n\r\n" + "User details\r\n\r\n";
 		InputStream is = new ByteArrayInputStream(message.getBytes());
-		DataInputStream in = new DataInputStream(is);
+		DataInputStream dis = new DataInputStream(is);
 
 		RequestLine reqLine = new RequestLine("GET /chat HTTP/1.1");
 		Header head = new Header(reqLine);
 		Body body = new Body("User details");
 		Message msg = new Message(head, body);
 
-		assertEquals(msg, Message.read(in, true));
-
+		assertEquals(msg, Message.read(dis, true));
 	}
 
 	@Test
-	public void testRead2() {
+	public void testRead2() throws EOFException, IOException {
 
 		String message = "GET /chatHTTP/1.1\r\n" + "Content-Length: 12\r\n" + "Content-Type: text/json\r\n" + "Date: "
 				+ new Date().toString() + "\r\n\r\n" + "User details\r\n\r\n";
@@ -113,11 +114,10 @@ public class MessageTest {
 		DataInputStream in = new DataInputStream(is);
 
 		assertEquals(null, Message.read(in, true));
-
 	}
 
 	@Test
-	public void testRead3() {
+	public void testRead3() throws EOFException, IOException {
 
 		String message = "HTTP/1.1 200 OK\r\n" + "Connection: close\r\n" + "Content-Length: 12\r\n"
 				+ "Content-Type: text/json\r\n" + "Date: " + new Date().toString() + "\r\n\r\n"
@@ -135,7 +135,7 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testRead4() {
+	public void testRead4() throws EOFException, IOException {
 
 		String message = "GET /chat HTTP/1.1\r\n" + "Content-Length: 0\r\n" + "Content-Type: text/json\r\n" + "Date: "
 				+ new Date().toString() + "\r\n\r\n";
@@ -152,7 +152,7 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testRead5() {
+	public void testRead5() throws EOFException, IOException {
 
 		String message = "GET /chat HTTP/1.1\r\n" + "\r\n\r\n";// +
 																// "Content-Length:
@@ -174,7 +174,7 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testRead6() {
+	public void testRead6() throws EOFException, IOException {
 
 		String message = "GET /chat HTTP/1.1\r\n" + "Content-Length: 22\r\n" + "Connection\r\n"
 				+ "Content-Type: text/json\r\n" + "Date: " + new Date().toString() + "\r\n\r\n"
@@ -243,6 +243,87 @@ public class MessageTest {
 						+ "Content-Length: 0\r\n" + "Date: " + new Date().toString() + "\r\n\r\n",
 				testMessage1.toString());
 
+	}
+
+	@Test
+	public void testToString5() {
+		ResponseLine resLine = new ResponseLine("HTTP/1.1 200 OK");
+		Header header = new Header(resLine);
+		header.addField(new HeaderField("Content-Type", "text/json"));
+		Body body = new Body("");
+		Message testMessage1 = new Message(header, body, false);
+		String testString = "HTTP/1.1 200 OK\r\n" + "Connection: close\r\n" + "Content-Type: text/json\r\n\r\n";
+		String messageString = testMessage1.toString();
+		assertEquals(testString, messageString);
+	}
+
+	@Test
+	public void testToBytes1() {
+		RequestLine reqLine = new RequestLine("GET /chat HTTP/1.1");
+		ArrayList<HeaderField> hField = new ArrayList<>();
+		hField.add(new HeaderField("Content-Type", "text/json"));
+		Header header = new Header(reqLine, hField);
+		Body body = new Body("Content");
+		Message message = new Message(header, body);
+		byte[] testBytes = ("GET /chat HTTP/1.1\r\n" + "Content-Type: text/json\r\n" + "Content-Length: 7\r\n"
+				+ "Date: " + new Date().toString() + "\r\n\r\n" + "Content\r\n\r\n").getBytes();
+		byte[] messageBytes = message.toBytes();
+
+		assertArrayEquals(testBytes, messageBytes);
+	}
+
+	@Test
+	public void testToBytes2() {
+		ResponseLine resLine = new ResponseLine("HTTP/1.1 200 OK");
+		Header header = new Header(resLine);
+		header.addField(new HeaderField("Content-Type", "text/json"));
+		Body body = new Body("Content");
+		Message message = new Message(header, body);
+		byte[] testBytes = ("HTTP/1.1 200 OK\r\n" + "Connection: close\r\n" + "Content-Type: text/json\r\n"
+				+ "Content-Length: 7\r\n" + "Date: " + new Date().toString() + "\r\n\r\n" + "Content\r\n\r\n")
+						.getBytes();
+		byte[] messageBytes = message.toBytes();
+		assertArrayEquals(testBytes, messageBytes);
+	}
+
+	@Test
+	public void testToBytes3() {
+		ResponseLine resLine = new ResponseLine("HTTP/1.1", "404", "File Not Found");
+		Header header = new Header(resLine);
+		Body body = new Body("Content");
+		Message message = new Message(header, body);
+		byte[] testBytes = ("HTTP/1.1 404 File Not Found\r\n" + "Connection: close\r\n" + "Date: "
+				+ new Date().toString() + "\r\n\r\n" + "Content\r\n\r\n").getBytes();
+		byte[] messageBytes = message.toBytes();
+		assertArrayEquals(testBytes, messageBytes);
+	}
+
+	@Test
+	public void testToBytes4() {
+		ResponseLine resLine = new ResponseLine("HTTP/1.1 200 OK");
+		Header header = new Header(resLine);
+		header.addField(new HeaderField("Content-Type", "text/json"));
+		Body body = new Body("");
+		Message message = new Message(header, body);
+		byte[] testBytes = ("HTTP/1.1 200 OK\r\n" + "Connection: close\r\n" + "Content-Type: text/json\r\n"
+				+ "Content-Length: 0\r\n" + "Date: " + new Date().toString() + "\r\n\r\n").getBytes();
+		byte[] messageBytes = message.toBytes();
+
+		assertArrayEquals(testBytes, messageBytes);
+	}
+
+	@Test
+	public void testToBytes5() {
+		ResponseLine resLine = new ResponseLine("HTTP/1.1 200 OK");
+		Header header = new Header(resLine);
+		header.addField(new HeaderField("Content-Type", "text/json"));
+		Body body = new Body("");
+		Message message = new Message(header, body, false);
+		byte[] testBytes = ("HTTP/1.1 200 OK\r\n" + "Connection: close\r\n" + "Content-Type: text/json\r\n\r\n")
+				.getBytes();
+		byte[] messageBytes = message.toBytes();
+
+		assertArrayEquals(testBytes, messageBytes);
 	}
 
 	@Test
@@ -352,6 +433,16 @@ public class MessageTest {
 		Message testMessage2 = new Message(header2, body);
 
 		assertFalse(testMessage1.equals(testMessage2));
+	}
+
+	@Test
+	public void testEquals9() {
+		Header header = null;
+		Body body = new Body("Content");
+		Message testMessage1 = new Message(header, body, false);
+		Message testMessage2 = new Message(header, body);
+
+		assertFalse(testMessage2.equals(testMessage1));
 	}
 
 }
