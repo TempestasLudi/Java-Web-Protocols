@@ -23,7 +23,8 @@ public class Message {
 	private Body body;
 
 	/**
-	 * A flag determining whether the message should create some default headers.
+	 * A flag determining whether the message should create some default
+	 * headers.
 	 */
 	private boolean autoHeaders = true;
 
@@ -73,6 +74,26 @@ public class Message {
 	 */
 	public Body getBody() {
 		return this.body;
+	}
+
+	/**
+	 * Get the autoHeaders.
+	 *
+	 * @return the autoHeaders
+	 */
+	public boolean isAutoHeaders() {
+		return autoHeaders;
+	}
+	
+
+	/**
+	 * Change the autoHeaders.
+	 *
+	 * @param autoHeaders
+	 *            the autoHeaders to change to
+	 */
+	public void setAutoHeaders(boolean autoHeaders) {
+		this.autoHeaders = autoHeaders;
 	}
 
 	/**

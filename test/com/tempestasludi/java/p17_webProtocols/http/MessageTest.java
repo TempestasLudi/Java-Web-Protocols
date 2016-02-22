@@ -31,44 +31,41 @@ public class MessageTest {
 	}
 
 	@Test
-	public void testGetHeader() {
+	public void testConstructorAutoHeaders() {
 		Header header = new Header();
 		Body body = new Body("Content");
-		Message testMessage = new Message(header, body);
+		Message testMessage = new Message(header, body, false);
 
-		assertEquals(header, testMessage.getHeader());
+		assertEquals(false, testMessage.isAutoHeaders());
 	}
-
+	
 	@Test
-	public void testGetBody() {
+	public void testGetSetAutoHeaders(){
 		Header header = new Header();
 		Body body = new Body("Content");
-		Body body2 = new Body("Content");
-		Message testMessage = new Message(header, body);
-
-		assertEquals(body2, testMessage.getBody());
+		Message testMessage = new Message(header, body, false);
+		testMessage.setAutoHeaders(true);
+		assertEquals(true, testMessage.isAutoHeaders());
 	}
-
+	
 	@Test
-	public void testSetHeader() {
+	public void testGetSetHeader() {
 		Header header = new Header();
 		Header header2 = new Header();
 		Body body = new Body("Content");
 		Message testMessage = new Message(header, body);
 
-		assertEquals(header, testMessage.getHeader());
 		testMessage.setHeader(header2);
 		assertEquals(header2, testMessage.getHeader());
 	}
 
 	@Test
-	public void testSetBody() {
+	public void testGetSetBody() {
 		Header header = new Header();
 		Body body = new Body("Content");
 		Body body2 = new Body("Content 2");
 		Message testMessage = new Message(header, body);
 
-		assertEquals(body, testMessage.getBody());
 		testMessage.setBody(body2);
 		assertEquals(body2, testMessage.getBody());
 	}
