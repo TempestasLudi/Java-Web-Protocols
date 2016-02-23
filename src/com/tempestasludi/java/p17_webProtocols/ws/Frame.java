@@ -162,50 +162,53 @@ public class Frame {
 	 *            the stream to read from
 	 * @return a frame based on the data from the input stream
 	 */
-	public static Frame read(DataInputStream in) {
-		try {
-			int buffer = in.read();
-			boolean lastFrame = buffer / 128 == 1;
-			int opcode = (buffer % 16);
-			buffer = in.read();
-			boolean masked = buffer / 128 == 1;
-			long length = (buffer % 128);
-			if (length >= 126) {
-				byte[] lengthBuffer;
-				if (length == 126) {
-					lengthBuffer = new byte[2];
-					in.read(lengthBuffer);
-					length = ByteBuffer.allocate(2).put(lengthBuffer).getShort();
-				} else if (length == 127) {
-					lengthBuffer = new byte[8];
-					in.read(lengthBuffer);
-					length = ByteBuffer.allocate(8).put(lengthBuffer).getLong();
-				}
+	public static Frame read(DataInputStream in) throws IOException {
+		// First byte: lastFrame(1) + opCode(4)
+		int buffer = in.read();
+		boolean lastFrame = buffer / 128 == 1;
+		int opcode = (buffer % 16);
+		
+		// Second byte: masked(1) + length(7)
+		buffer = in.read();
+		boolean masked = buffer / 128 == 1;
+		long length = (buffer % 128);
+		
+		// Maybe some additional length bytes:
+		if (length >= 126) {
+			byte[] lengthBuffer;
+			if (length == 126) {
+				lengthBuffer = new byte[2];
+				in.read(lengthBuffer);
+				length = ByteBuffer.allocate(2).put(lengthBuffer).getShort();
+			} else if (length == 127) {
+				lengthBuffer = new byte[8];
+				in.read(lengthBuffer);
+				length = ByteBuffer.allocate(8).put(lengthBuffer).getLong();
 			}
-			byte[] mask = new byte[4];
-			if (masked) {
-				for (int i = 0; i < 4; i++) {
-					mask[i] = (byte) in.read();
-				}
-			}
-			byte[] payload = new byte[(int) length];
-			for (int i = 0; i < length; i++) {
-				if (masked) {
-					payload[i] = (byte) (in.read() ^ mask[i % 4]);
-				} else {
-					payload[i] = (byte) (in.read());
-				}
-			}
-			return new Frame(lastFrame, opcode, masked, mask, new String(payload));
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
 		}
-		return new Frame(true, 1, false, new byte[0], "");
+		
+		// The next four bytes: mask
+		byte[] mask = new byte[4];
+		if (masked) {
+			for (int i = 0; i < 4; i++) {
+				mask[i] = (byte) in.read();
+			}
+		}
+		
+		// The remainder of the bytes form the payload/content of the frame
+		byte[] payload = new byte[(int) length];
+		for (int i = 0; i < length; i++) {
+			if (masked) {
+				payload[i] = (byte) (in.read() ^ mask[i % 4]);
+			} else {
+				payload[i] = (byte) (in.read());
+			}
+		}
+		return new Frame(lastFrame, opcode, masked, mask, new String(payload, StandardCharsets.UTF_8));
 	}
 
 	/**
-	 * Writes the frame to a output stream.
+	 * Writes the frame to an output stream.
 	 *
 	 * @param out
 	 *            the stream to write to

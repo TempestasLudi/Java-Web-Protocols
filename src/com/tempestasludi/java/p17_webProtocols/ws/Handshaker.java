@@ -20,7 +20,7 @@ import com.tempestasludi.java.p17_webProtocols.http.ResponseLine;
 public class Handshaker {
 
 	/**
-	 * Writes a handshake response.
+	 * Responds to a HTTP webSocket handshake request from a client.
 	 *
 	 * @param request
 	 *            the request to respond to
@@ -54,13 +54,15 @@ public class Handshaker {
 	 */
 	private static String generateKey(String clientKey) {
 		clientKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-		MessageDigest md = null;
+		byte[] serverKey;
 		try {
-			md = MessageDigest.getInstance("SHA-1");
+			MessageDigest md = MessageDigest.getInstance("SHA-1");
+			serverKey = md.digest(clientKey.getBytes(StandardCharsets.UTF_8));
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
+			serverKey = clientKey.getBytes(StandardCharsets.UTF_8);
 		}
-		clientKey = new String(Base64.getEncoder().encode(md.digest(clientKey.getBytes(StandardCharsets.UTF_8))));
+		clientKey = new String(Base64.getEncoder().encode(serverKey));
 		return clientKey;
 	}
 
