@@ -1,10 +1,11 @@
 package com.tempestasludi.java.p17_webProtocols.ws;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * Fram represents a data frame in an web socket communication session.
@@ -162,7 +163,7 @@ public class Frame {
 	 *            the stream to read from
 	 * @return a frame based on the data from the input stream
 	 */
-	public static Frame read(DataInputStream in) throws IOException {
+	public static Frame read(InputStream in) throws IOException {
 		// First byte: lastFrame(1) + opCode(4)
 		int buffer = in.read();
 		boolean lastFrame = buffer / 128 == 1;
@@ -179,11 +180,13 @@ public class Frame {
 			if (length == 126) {
 				lengthBuffer = new byte[2];
 				in.read(lengthBuffer);
-				length = ByteBuffer.allocate(2).put(lengthBuffer).getShort();
-			} else if (length == 127) {
-				lengthBuffer = new byte[8];
-				in.read(lengthBuffer);
-				length = ByteBuffer.allocate(8).put(lengthBuffer).getLong();
+				ByteBuffer byteBuffer = ByteBuffer.allocate(2).put(lengthBuffer);
+				byteBuffer.rewind();
+				length = byteBuffer.getShort();
+//			} else if (length == 127) {
+//				lengthBuffer = new byte[8];
+//				in.read(lengthBuffer);
+//				length = ByteBuffer.allocate(8).put(lengthBuffer).getLong();
 			}
 		}
 		
@@ -213,37 +216,69 @@ public class Frame {
 	 * @param out
 	 *            the stream to write to
 	 */
-	public void write(DataOutputStream out) {
-		try {
-			if (this.lastFrame) {
-				out.write((byte) 128 + opcode);
-			} else {
-				out.write((byte) opcode);
-			}
-			byte[] dataBytes = this.payload.getBytes(StandardCharsets.UTF_8);
-			long dataLength = dataBytes.length;
-			int maskedValue = 0;
-			if (this.masked) {
-				maskedValue = 128;
-			}
-			if (dataLength < 126) {
-				out.write((byte) dataLength + maskedValue);
-			} else if (dataLength < Integer.MAX_VALUE) {
-				out.write((byte) 126 + maskedValue);
-				out.write(ByteBuffer.allocate(2).putShort((short) dataLength).array());
-			} else {
-				out.write((byte) 127 + maskedValue);
-				out.write(ByteBuffer.allocate(8).putLong(dataLength).array());
-			}
-			if (this.masked) {
-				out.write(this.mask);
-			}
-			out.write(dataBytes);
-			out.flush();
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+	public void write(OutputStream out) throws IOException {
+		if (this.lastFrame) {
+			out.write((byte) 128 + opcode);
+		} else {
+			out.write((byte) opcode);
 		}
+		byte[] dataBytes = this.payload.getBytes(StandardCharsets.UTF_8);
+		long dataLength = dataBytes.length;
+		int maskedValue = 0;
+		if (this.masked) {
+			maskedValue = 128;
+		}
+		if (dataLength < 126) {
+			out.write((byte) dataLength + maskedValue);
+//		} else if (dataLength >= Integer.MAX_VALUE) {
+//			out.write((byte) 127 + maskedValue);
+//			out.write(ByteBuffer.allocate(8).putLong(dataLength).array());
+		} else {
+			out.write((byte) 126 + maskedValue);
+			out.write(ByteBuffer.allocate(2).putShort((short) dataLength).array());
+		} 
+		if (this.masked) {
+			out.write(this.mask);
+		}
+		out.write(dataBytes);
+		out.flush();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Frame)) {
+			return false;
+		}
+		Frame other = (Frame) obj;
+		if (lastFrame != other.lastFrame) {
+			return false;
+		}
+		if (masked && !Arrays.equals(mask, other.mask)) {
+			return false;
+		}
+		if (masked != other.masked) {
+			return false;
+		}
+		if (opcode != other.opcode) {
+			return false;
+		}
+		if (payload == null) {
+			if (other.payload != null) {
+				return false;
+			}
+		} else if (!payload.equals(other.payload)) {
+			return false;
+		}
+		return true;
 	}
 
 }
