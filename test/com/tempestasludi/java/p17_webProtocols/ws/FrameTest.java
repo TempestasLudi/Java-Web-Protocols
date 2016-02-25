@@ -17,12 +17,7 @@ public class FrameTest {
 	}
 	
 	private Frame generate(byte[] mask) {
-		if (mask.length == 0) {
-			return new Frame(true, 1, false, mask, "Payload, ya know?");
-		}
-		else {
-			return new Frame(true, 1, true, mask, "Payload, ya know?");
-		}
+		return new Frame(true, 1, true, mask, "Payload, ya know?");
 	}
 	
 	private byte[] generateMask() {
