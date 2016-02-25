@@ -27,7 +27,7 @@ public class Handshaker {
 	 * @param out
 	 *            the outputStream to write to
 	 */
-	public static void makeServerHandshake(Message request, PrintWriter out) {
+	public static void makeServerHandshake(Message request, PrintWriter out) throws NoSuchAlgorithmException {
 		String clientKey = "";
 		if (request.getHeader().getField("Sec-WebSocket-Key") != null) {
 			clientKey = generateKey(request.getHeader().getField("Sec-WebSocket-Key").getValue().trim());
@@ -52,16 +52,11 @@ public class Handshaker {
 	 *            the key sent from the client
 	 * @return a key based on clientKey
 	 */
-	private static String generateKey(String clientKey) {
+	private static String generateKey(String clientKey) throws NoSuchAlgorithmException {
 		clientKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		byte[] serverKey;
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			serverKey = md.digest(clientKey.getBytes(StandardCharsets.UTF_8));
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			serverKey = clientKey.getBytes(StandardCharsets.UTF_8);
-		}
+		MessageDigest md = MessageDigest.getInstance("SHA-1");
+		serverKey = md.digest(clientKey.getBytes(StandardCharsets.UTF_8));
 		clientKey = new String(Base64.getEncoder().encode(serverKey));
 		return clientKey;
 	}
