@@ -16,11 +16,6 @@ import com.tempestasludi.java.p17_webProtocols.http.RequestLine;
 import com.tempestasludi.java.p17_webProtocols.http.ResponseLine;
 
 public class HandshakerTest {
-
-	@Test
-	public void testHandshaker() {
-		Handshaker shaker = new Handshaker();
-	}
 	
 	@Test
 	public void testMakeServerHandshakeWithHeaders() throws NoSuchAlgorithmException {
